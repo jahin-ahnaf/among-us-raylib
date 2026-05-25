@@ -1,5 +1,6 @@
 //Game Menu Scene
 #include <bits/stdc++.h>
+#include <steam/steam_api.h>
 #include "../../objects/player.cpp"
 #include "../../objects/header.cpp"
 #include "../../objects/button.cpp"
@@ -19,6 +20,11 @@ int main() {
     InitWindow(GetMonitorWidth(0), GetMonitorHeight(0), "Among Us (Alpha)");
     SetTargetFPS(60);
 
+    bool steamInitialized = SteamAPI_Init();
+    if (!steamInitialized) {
+        cerr << "Steamworks failed to initialize. Run Steam and launch the game again.\n";
+    }
+    
     //Among Us Font Load
     Font font = LoadFontEx("../../../resources/fonts/title.ttf", 256, 0, 0);
     SetTextureFilter(font.texture, TEXTURE_FILTER_BILINEAR); //For Sharp Edges
@@ -66,6 +72,9 @@ int main() {
 
     //Game Loop
     while (!WindowShouldClose()) {
+        if (steamInitialized) {
+            SteamAPI_RunCallbacks(); //Run Steam Callbacks
+        }
         //Get Mouse Position
         Vector2 mousePos = GetMousePosition();
 
@@ -81,20 +90,24 @@ int main() {
         } else settingsButton.backgroundColor = initButtonBgColor, settingsButton.textColor = initButtonTextColor;
 
         //client fps
-        const char *fps = ("Client FPS: " + to_string(GetFPS())).c_str();
+        string fpsText = "Client FPS: " + to_string(GetFPS());
 
         //Drawing Objects on Scene
         BeginDrawing();
             ClearBackground(BLACK); //Background
-            header.Draw(font, "Among Us", "v0.1 (Alpha)"); //Title and Game Version
+            header.Draw(font, "@", "v0.1 (Alpha)"); //Title and Game Version
             testButton.Draw(); //Test Button
             settingsButton.Draw(); //Settings Button
 
-            DrawText(fps, 10, 10, 24, WHITE); //Client FPS Text (top-left corner)
+            DrawText(fpsText.c_str(), 10, 10, 24, WHITE); //Client FPS Text (top-left corner)
+            DrawText(TextFormat("Welcome %s", steamInitialized ? SteamFriends()->GetPersonaName() : "Guest"), 10, 40, 24, WHITE); //Welcome Text with Steam Username (below FPS)
         EndDrawing();
     }
     //Unload font
     UnloadFont(font);
+    if (steamInitialized) {
+        SteamAPI_Shutdown(); //Shutdown Steam API
+    }
 
     CloseWindow();
     return 0;

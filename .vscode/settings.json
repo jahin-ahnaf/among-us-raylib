@@ -1,0 +1,8 @@
+{
+  "code-runner.executorMap": {
+    "cpp": "cd \"$dir\" && g++ \"$fullFileName\" -std=c++17 -g -I\"$workspaceRoot/include\" -L\"$workspaceRoot/lib\" -lsteam_api -lraylib -lGL -lm -lpthread -ldl -lrt -lX11 -Wl,-rpath,\"$workspaceRoot/lib\" -o \"$fileNameWithoutExt\" && ./$fileNameWithoutExt"
+  },
+  "code-runner.fileDirectoryAsCwd": true,
+  "code-runner.runInTerminal": true,
+  "code-runner.saveFileBeforeRun": true
+}
