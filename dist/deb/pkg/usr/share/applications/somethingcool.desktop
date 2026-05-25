@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Something Cool
+Exec=somethingcool
+Icon=somethingcool
+Categories=Game;
+Terminal=false

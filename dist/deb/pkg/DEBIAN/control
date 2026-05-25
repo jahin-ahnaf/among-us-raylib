@@ -1,0 +1,7 @@
+Package: somethingcool
+Version: 1.0
+Section: games
+Priority: optional
+Architecture: amd64
+Maintainer: Copilot CLI
+Description: Raylib/ENet room-based multiplayer game
