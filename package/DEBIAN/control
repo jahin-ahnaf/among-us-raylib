@@ -1,0 +1,8 @@
+Package: somethingcool
+Version: 0.1
+Section: games
+Priority: optional
+Architecture: amd64
+Depends: libc6, libstdc++6, libgl1
+Maintainer: Jahin <you@example.com>
+Description: Something Cool (dev build) - Steam lobby testing build

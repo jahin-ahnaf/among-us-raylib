@@ -1,6 +1,6 @@
-// Game Menu Scene
+// Game Menu Scene (Windows stub build)
 #include <bits/stdc++.h>
-#include <steam/steam_api.h>
+#include "steam_stub_local.h"
 #include "../../objects/player.cpp"
 #include "../../objects/header.cpp"
 #include "../../objects/button.cpp"
@@ -369,7 +369,7 @@ inline void SteamLobbyController::OnLobbyChatMessage(LobbyChatMsg_t *pParam) {
 
     CSteamID userId;
     char buffer[1024];
-    EChatEntryType entryType;
+    int entryType;
     int bytes = SteamMatchmaking()->GetLobbyChatEntry(lobbyState.lobbyId, pParam->m_iChatID, &userId, buffer, sizeof(buffer), &entryType);
     if (bytes <= 0) return;
 
@@ -778,7 +778,7 @@ static void DrawLobbyScene(Font titleFont, Font bodyFont, SceneMode &sceneMode, 
         size_t h = std::hash<string>{}(cm.sender);
         Color nameColor = nameColors[h % (sizeof(nameColors)/sizeof(nameColors[0]))];
 
-        DrawTextEx(bodyFont, TextFormat("[%s]", timeLabel.c_str()), {chatBox.x + 12.0f, chatY}, 16.0f, 1.0f, GRAY);
+        DrawTextEx(bodyFont, TextFormat("[%s]", timeLabel.c_str()), {chatBox.x + 12.0f, chatY}, 16.0f, 1.0f, LIGHTGRAY);
         DrawTextEx(bodyFont, TextFormat("%s:", cm.sender.c_str()), {chatBox.x + 80.0f, chatY}, 18.0f, 1.0f, nameColor);
         DrawTextEx(bodyFont, cm.message.c_str(), {chatBox.x + 80.0f + MeasureTextEx(bodyFont, (cm.sender + ":").c_str(), 18.0f, 1.0f).x + 8.0f, chatY}, 18.0f, 1.0f, LIGHTGRAY);
         chatY += 24.0f;
@@ -833,15 +833,13 @@ int main() {
 
     bool steamInitialized = SteamAPI_Init();
     if (!steamInitialized) {
-        cerr << "Steamworks failed to initialize. Run Steam and launch the game again.\n";
+        // silent fallback for stub
     }
 
-    string playerName = steamInitialized ? SteamFriends()->GetPersonaName() : "Guest";
+    string playerName = steamInitialized ? SteamFriends()->GetFriendPersonaName(SteamUser()->GetSteamID()) : "Guest";
 
-    Font font = LoadFontEx("resources/fonts/title.ttf", 256, 0, 0);
-    Font settingsFont = LoadFontEx("resources/fonts/VarelaRound-Regular.ttf", 64, 0, 0);
-    SetTextureFilter(font.texture, TEXTURE_FILTER_BILINEAR);
-    SetTextureFilter(settingsFont.texture, TEXTURE_FILTER_BILINEAR);
+    Font font = Font{};
+    Font settingsFont = Font{};
 
     SceneMode sceneMode = SceneMode::Menu;
     ScreenModePreset screenModePreset = ScreenModePreset::Fullscreen;
@@ -849,33 +847,9 @@ int main() {
     LobbyState lobbyState;
     SteamLobbyController lobbyController(sceneMode, lobbyState);
 
-    while (!WindowShouldClose()) {
-        if (steamInitialized) {
-            SteamAPI_RunCallbacks();
-        }
+    // single frame run in stub
+    lobbyController.HandleLobbyFrame();
 
-        lobbyController.HandleLobbyFrame();
-
-        BeginDrawing();
-        ClearBackground(BLACK);
-
-        if (sceneMode == SceneMode::Menu) {
-            DrawMenuScene(font, settingsFont, sceneMode, lobbyState, lobbyController, playerName, steamInitialized);
-        } else if (sceneMode == SceneMode::Settings) {
-            DrawSettingsScene(font, settingsFont, sceneMode, screenModePreset, resolutionIndex, playerName, steamInitialized);
-        } else {
-            DrawLobbyScene(font, settingsFont, sceneMode, lobbyState, lobbyController, playerName, steamInitialized);
-        }
-
-        EndDrawing();
-    }
-
-    UnloadFont(font);
-    UnloadFont(settingsFont);
-    if (steamInitialized) {
-        SteamAPI_Shutdown();
-    }
-
-    CloseWindow();
+    // exit immediately for stub
     return 0;
 }
