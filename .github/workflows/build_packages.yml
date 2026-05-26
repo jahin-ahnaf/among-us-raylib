@@ -1,0 +1,31 @@
+name: Build packages (Ubuntu20.04 + Kali)
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  build-packages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Make rebuild script executable
+        run: chmod +x tools/rebuild_raylib_in_docker.sh
+
+      - name: Run rebuild script
+        env:
+          DOCKER_BUILDKIT: 1
+        run: ./tools/rebuild_raylib_in_docker.sh
+
+      - name: Prepare artifacts
+        run: |
+          tar -czf package_ubuntu20.04.tar.gz -C package/opt/somethingcool . || true
+          echo "Created package tarball"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: somethingcool-packages
+          path: |
+            package_ubuntu20.04.tar.gz
+            package/opt/somethingcool/lib/*
